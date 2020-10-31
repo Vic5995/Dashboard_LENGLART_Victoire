@@ -2,6 +2,7 @@ package model;
 
 public class Student {
   private int id;
+  private String login;
   private String lastName;
   private String firstName;
   private String password;
@@ -9,8 +10,9 @@ public class Student {
   private State state;
   private String comment;
 
-  public Student(int id, String lastName, String firstName, String password, int prom, State state, String comment) {
+  public Student(int id, String login, String lastName, String firstName, String password, int prom, State state, String comment) {
     this.id = id;
+    this.login = login;
     this.lastName = lastName;
     this.firstName = firstName;
     this.password = password;
@@ -77,5 +79,13 @@ public class Student {
 
   public boolean isFISE() {
     return this.prom == Prom.FISEA1 || this.prom == Prom.FISEA2 || this.prom == Prom.FISEA3;
+  }
+
+  public String getLogin() {
+    return login;
+  }
+
+  public void setLogin(String login) {
+    this.login = login;
   }
 }
