@@ -2,14 +2,16 @@ package model;
 
 public enum State {
   PRESENT(1, true, true, "présent"),
-  CONTACT_CASE(2, false, false, "cas contact"),
-  CONTACT_CASE_CAMPUS(3, false, true, "cas contact"),
-  PREVENTION(4, false, false, "prévention"),
-  PREVENTION_CAMPUS(5, false, true, "prévention"),
-  POSITIVE(6, false, false, "positif-ve"),
-  POSITIVE_CAMPUS(7, false, true, "positif-ve"),
+  POSITIVE(2, false, false, "positif-ve"),
+  POSITIVE_CAMPUS(3, false, true, "positif-ve"),
+  CONTACT_CASE(4, false, false, "cas contact"),
+  CONTACT_CASE_CAMPUS(5, false, true, "cas contact"),
+  PREVENTION(6, false, false, "prévention"),
+  PREVENTION_CAMPUS(7, false, true, "prévention"),
   SICK(8, false, false, "malade"),
-  SICK_CAMPUS(9, false, true, "malade");
+  SICK_CAMPUS(9, false, true, "malade"),
+  PRO(10, false, false, "professionnel"),
+  PRO_CAMPUS(11, false, true, "professionnel");
 
   private final int id;
   private final boolean present;
@@ -37,5 +39,16 @@ public enum State {
 
   public String getState() {
     return state;
+  }
+
+  public State changeOnCampus() {
+    switch (this) {
+      case POSITIVE: return POSITIVE_CAMPUS;
+      case PREVENTION: return PREVENTION_CAMPUS;
+      case CONTACT_CASE: return CONTACT_CASE_CAMPUS;
+      case SICK: return SICK_CAMPUS;
+      case PRO: return PRO_CAMPUS;
+    }
+    return null;
   }
 }
