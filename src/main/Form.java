@@ -44,13 +44,13 @@ public class Form {
   public void printForm() {
     print(FORM_START_STR);
     print(INPUT_PRESENT_ABS_STR);
-    //WARNING null safety?
     State state = askPresentAbs();
-    print(state.getState());
+    String comment = askComment();
+    sendStudent(state, comment);
   }
 
   private State askPresentAbs() {
-    State finalState = null;
+    State finalState = currentStudent.getState();
     boolean inputAccepted = false;
     int selectedState;
     while (!inputAccepted) {
@@ -78,9 +78,13 @@ public class Form {
     return finalState;
   }
 
+  /**
+   * Permet de spécifier la raison de l'absence.
+   * @return
+   */
   private State askAbsReason() {
     print(INPUT_ABS_REASON_STR);
-    State finalState = null;
+    State finalState = currentStudent.getState(); //on met l'état actuel comme état de départ pour éviter les NPE
     boolean inputAccepted = false;
     int selectedState;
     while (!inputAccepted) {
@@ -148,6 +152,18 @@ public class Form {
       }
     }
     return finalState;
+  }
+
+  private String askComment() {
+    print(COMMENT_STR);
+    keyboard.next();
+    return keyboard.nextLine();
+  }
+
+  private void sendStudent(State newState, String comment) {
+    currentStudent.setState(newState);
+    currentStudent.setComment(comment);
+    //TODO envoyer vers base de données: retour booléen?
   }
 
 
