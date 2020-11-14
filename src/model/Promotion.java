@@ -2,7 +2,7 @@ package model;
 
 import java.util.List;
 
-public class Prom {
+public class Promotion {
   public static final int FILA1 = 1;
   public static final int FILA2 = 2;
   public static final int FILA3 = 3;
@@ -14,11 +14,11 @@ public class Prom {
   private int id;
   private List<Student> students;
 
-  public Prom(List<Student> students) {
+  public Promotion(List<Student> students) {
     this.students = students;
   }
 
-  public Prom(int id, List<Student> students) {
+  public Promotion(int id, List<Student> students) {
     this.id = id;
     this.students = students;
   }

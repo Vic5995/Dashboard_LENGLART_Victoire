@@ -6,17 +6,17 @@ public class Student {
   private String lastName;
   private String firstName;
   private String password;
-  private int prom;
+  private int promotion;
   private State state;
   private String comment;
 
-  public Student(int id, String login, String lastName, String firstName, String password, int prom, State state, String comment) {
+  public Student(int id, String login, String lastName, String firstName, String password, int promotion, State state, String comment) {
     this.id = id;
     this.login = login;
     this.lastName = lastName;
     this.firstName = firstName;
     this.password = password;
-    this.prom = prom;
+    this.promotion = promotion;
     this.state = state;
     this.comment = comment;
   }
@@ -45,12 +45,12 @@ public class Student {
     return password;
   }
 
-  public int getProm() {
-    return prom;
+  public int getPromotion() {
+    return promotion;
   }
 
-  public void setProm(int prom) {
-    this.prom = prom;
+  public void setPromotion(int promotion) {
+    this.promotion = promotion;
   }
 
   public State getState() {
@@ -70,15 +70,15 @@ public class Student {
   }
 
   public boolean isFIL() {
-    return this.prom == Prom.FILA1 || this.prom == Prom.FILA2 || this.prom == Prom.FILA3;
+    return this.promotion == Promotion.FILA1 || this.promotion == Promotion.FILA2 || this.promotion == Promotion.FILA3;
   }
 
   public  boolean isFIT() {
-    return this.prom == Prom.FITA1;
+    return this.promotion == Promotion.FITA1;
   }
 
   public boolean isFISE() {
-    return this.prom == Prom.FISEA1 || this.prom == Prom.FISEA2 || this.prom == Prom.FISEA3;
+    return this.promotion == Promotion.FISEA1 || this.promotion == Promotion.FISEA2 || this.promotion == Promotion.FISEA3;
   }
 
   public String getLogin() {

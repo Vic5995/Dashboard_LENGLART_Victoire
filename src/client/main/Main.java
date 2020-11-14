@@ -1,9 +1,17 @@
-package main;
+package client.main;
 
 import java.util.Scanner;
 
-public class Launch {
+public class Main {
   private static Scanner keyboard;
+
+  public static final String HOST = "127.0.0.1";
+  public static final int PORT = 2345;
+
+  public static final String INIT = "INIT";
+  public static final String GET_STUDENT = "GETSTUDENT";
+  public static final String SAVE_STUDENT = "SAVESTUDENT";
+  public static final String GET_DATA = "GETDATA";
 
   private static final int FORM_MODE = 1;
   private static final int DASHBOARD_MODE = 2;
@@ -58,7 +66,6 @@ public class Launch {
   private static void launchForm() {
     Form form = new Form();
     form.authentification();
-
   }
 
   private static void launchDashboard() {

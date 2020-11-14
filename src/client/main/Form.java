@@ -1,12 +1,13 @@
-package main;
+package client.main;
 
 import model.State;
 import model.Student;
-import server.ServerServices;
+import client.services.IStudentListener;
+import client.services.ServerServices;
 
 import java.util.Scanner;
 
-public class Form {
+public class Form implements IStudentListener {
   private final String AUTHENTIFICATION_STR = "Veuillez vous identifiez :";
   private final String LOGIN_STR = "Login : ";
   private final String PASSWORD_STR = "Mot de passe : ";
@@ -24,9 +25,22 @@ public class Form {
     String login = keyboard.nextLine();
     print(PASSWORD_STR);
     String password = keyboard.nextLine();
-    currentStudent = ServerServices.authentification(login, password);
-    //WARNING null safety?
-    printForm();
+    currentStudent = ServerServices.authentification(login, password, this);
+  }
+
+  @Override
+  public void onReceivedStudent(Student student) {
+    if (student != null) {
+      currentStudent = student;
+      printForm();
+    } else {
+      print("WRONG PASSWORD");
+    }
+  }
+
+  @Override
+  public void onStudentSaved(boolean saved) {
+
   }
 
   /* =================================================

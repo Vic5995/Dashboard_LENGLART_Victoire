@@ -51,4 +51,21 @@ public enum State {
     }
     return null;
   }
+
+  public static State getStateFromId(int id) {
+    switch (id) {
+      case 1: return PRESENT;
+      case 2: return POSITIVE;
+      case 3: return POSITIVE_CAMPUS;
+      case 4: return CONTACT_CASE;
+      case 5: return CONTACT_CASE_CAMPUS;
+      case 6: return PREVENTION;
+      case 7: return PREVENTION_CAMPUS;
+      case 8: return SICK;
+      case 9: return SICK_CAMPUS;
+      case 10: return PRO;
+      case 11: return PRO_CAMPUS;
+      default: return PRESENT;
+    }
+  }
 }
