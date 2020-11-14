@@ -8,26 +8,29 @@ import java.sql.*;
 public class StudentTask {
   private Connection connexion;
 
-  public Student getStudent(String mLogin) {
-    Student user = null;
-
-    //chargement du driver
+  private void loadDatabase() {
+    // Chargement du driver
     try {
       Class.forName("org.sqlite.JDBC");
-    } catch(ClassNotFoundException c) {
-      System.out.println(c.getMessage());
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
     }
-
-    //connexion à la base
-    Connection connexion = null;
-    Statement statement = null;
-    ResultSet results = null;
 
     try {
       connexion = DriverManager.getConnection("jdbc:sqlite:dashboard.db", "root", "");
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
-      //statement = connexion.createStatement();
+  public Student getStudent(String mLogin) {
+    loadDatabase();
+    Student student = null;
 
+    //connexion à la base
+    ResultSet results = null;
+
+    try {
       //exécution de la requête
       PreparedStatement lookingForUser =
         connexion.prepareStatement("SELECT * FROM student WHERE login = ?;");
@@ -40,25 +43,51 @@ public class StudentTask {
         String lastname = results.getString("lastname");
         String firstname = results.getString("firstname");
         String password = results.getString("_password");
-        //String login = results.getString("login");
         int prom = results.getInt("promomotion");
         int state = results.getInt("state");
         String comment = results.getString("_comment");
-        user = new Student(id_student, mLogin, lastname, firstname, password, prom, State.getStateFromId(state), comment);
+        student = new Student(id_student, mLogin, lastname, firstname, password, prom, State.getStateFromId(state), comment);
       }
     } catch(SQLException s) {
       System.out.println(s.getMessage());
     } finally {
-
       //fermeture de connexion
       try {
         if(results != null) { results.close(); }
-        if(statement != null) { statement.close(); }
         if(connexion != null) { connexion.close(); }
       } catch (SQLException e) {
         System.out.println(e.getMessage());
       }
     }
-    return user;
+    return student;
   }
+
+  public boolean updateStudent(Student student) {
+    loadDatabase();
+    boolean executedCorrectly = false;
+
+    try {
+      //exécution de la requête
+      PreparedStatement update =
+        connexion.prepareStatement("UPDATE student SET state=?, _comment=? WHERE id_student=?;");
+      update.setInt(1, student.getState().getId());
+      update.setString(2, student.getComment());
+      update.setInt(3, student.getId());
+
+      int result = update.executeUpdate();
+      if (result == 1) executedCorrectly = true;
+    } catch(SQLException s) {
+      System.out.println(s.getMessage());
+    } finally {
+      //fermeture de connexion
+      try {
+        if(connexion != null) { connexion.close(); }
+      } catch (SQLException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+    return executedCorrectly;
+  }
+
+
 }

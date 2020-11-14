@@ -1,18 +1,20 @@
 package client.services;
 
 import client.main.Main;
-import model.Promotion;
-import model.State;
+import model.ServerCommand;
 import model.Student;
 
 public class ServerServices {
 
-  public static Student authentification(String login, String password, IStudentListener listener) {
-    //WARNING AsyncTask pour appel bdd
-    Thread t = new Thread(new ClientConnexion(Main.HOST, Main.PORT, Main.GET_STUDENT, listener, login));
+  public static void authentification(String login, String password, IStudentListener listener) {
+    String loginPassword = login + "/" + password;
+    Thread t = new Thread(new ClientConnexion(Main.HOST, Main.PORT, listener, loginPassword));
     t.start();
+  }
 
-    return new Student(1, "login", "test", "test", "password", Promotion.FITA1, State.PRESENT, "");
+  public static void saveStudent(Student student, IStudentListener listener) {
+    Thread t = new Thread(new ClientConnexion(Main.HOST, Main.PORT, listener, student));
+    t.start();
   }
 
 }

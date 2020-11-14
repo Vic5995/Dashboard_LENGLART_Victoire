@@ -1,6 +1,8 @@
 package model;
 
-public enum State {
+import java.io.Serializable;
+
+public enum State implements Serializable {
   PRESENT(1, true, true, "présent"),
   POSITIVE(2, false, false, "positif-ve"),
   POSITIVE_CAMPUS(3, false, true, "positif-ve"),

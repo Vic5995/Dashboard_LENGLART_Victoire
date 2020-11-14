@@ -25,22 +25,27 @@ public class Form implements IStudentListener {
     String login = keyboard.nextLine();
     print(PASSWORD_STR);
     String password = keyboard.nextLine();
-    currentStudent = ServerServices.authentification(login, password, this);
+    ServerServices.authentification(login, password, this);
   }
 
   @Override
-  public void onReceivedStudent(Student student) {
+  public void onReceivedStudent(Student student, String serverResponse) {
     if (student != null) {
       currentStudent = student;
+      print(student.getLogin());
       printForm();
     } else {
-      print("WRONG PASSWORD");
+      print(serverResponse);
     }
   }
 
   @Override
   public void onStudentSaved(boolean saved) {
-
+    if (saved) {
+      print("Mise à jour effectuée");
+    } else {
+      print("Erreur de sauvegarde");
+    }
   }
 
   /* =================================================
@@ -52,7 +57,7 @@ public class Form implements IStudentListener {
   private final String INPUT_ABS_REASON_STR = "Pour quel motif êtes-vous absent? \n" +
     "1. COVID\n2. Cas Contact COVID\n3. En attente de test ou de résultats de test COVID\n4. Malade autre\n5. Motif professionel";
   private final String INPUT_CAMPUS_STR = "Êtes-vous sur ou hors campus?\n1. Sur le Campus\n2. Hors campus";
-  private final String COMMENT_STR = "Voulez-vous ajouter un commentaire à votre situation (si non, appuyez sur Entrée) ?";
+  private final String COMMENT_STR = "Voulez-vous ajouter un commentaire à votre situation (si non, appuyez sur 0 et Entrée) ?";
   private  final String INPUT_ERROR_MODE_STR = "Saisie incorrecte";
 
   public void printForm() {
@@ -60,6 +65,7 @@ public class Form implements IStudentListener {
     print(INPUT_PRESENT_ABS_STR);
     State state = askPresentAbs();
     String comment = askComment();
+    if (comment.equals("0")) comment = null;
     sendStudent(state, comment);
   }
 
@@ -177,9 +183,8 @@ public class Form implements IStudentListener {
   private void sendStudent(State newState, String comment) {
     currentStudent.setState(newState);
     currentStudent.setComment(comment);
-    //TODO envoyer vers base de données: retour booléen?
+    ServerServices.saveStudent(currentStudent, this);
   }
-
 
   /* =================================================
       UTILITY SERVICES
