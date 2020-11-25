@@ -1,9 +1,12 @@
 package server.services;
 
 import model.ServerCommand;
-import model.ServerDataSet;
+import model.serverDataSet.FILDataSet;
+import model.serverDataSet.FISEDataSet;
+import model.serverDataSet.FITDataSet;
+import model.serverDataSet.ServerDataSet;
 import model.Student;
-import server.dbTasks.DataSetTask;
+import server.dbTasks.ServerDataSetTask;
 import server.dbTasks.StudentTask;
 import utils.ConsoleColors;
 
@@ -45,13 +48,33 @@ public class ClientProcessor implements Runnable {
             closeConnexion = true;
             break;
           }
-          case ServerCommand.SAVE_STUDENT: {
+          case ServerCommand.POST_STUDENT: {
             saveStudent();
             closeConnexion = true;
             break;
           }
           case ServerCommand.GET_GENERAL: {
             getGeneral();
+            closeConnexion = true;
+            break;
+          }
+          case ServerCommand.GET_PROMOTIONS: {
+            getPromotions();
+            closeConnexion = true;
+            break;
+          }
+          case ServerCommand.GET_FIL: {
+            getFilDataSet();
+            closeConnexion = true;
+            break;
+          }
+          case ServerCommand.GET_FIT: {
+            getFitDataSet();
+            closeConnexion = true;
+            break;
+          }
+          case ServerCommand.GET_FISE: {
+            getFiseDataSet();
             closeConnexion = true;
             break;
           }
@@ -105,8 +128,52 @@ public class ClientProcessor implements Runnable {
 
   private void getGeneral() throws IOException {
     System.out.println("Collecting datas...");
-    DataSetTask task = new DataSetTask();
+    ServerDataSetTask task = new ServerDataSetTask();
     ServerDataSet dataSet = task.getGeneralDataSet();
+    if (dataSet != null) {
+      writer.writeObject(dataSet);
+      writer.flush();
+      System.out.println("Datas Sent!");
+    }
+  }
+
+  private void getPromotions() throws IOException {
+    System.out.println("Collecting datas...");
+    ServerDataSetTask task = new ServerDataSetTask();
+    ServerDataSet dataSet = task.getPromotionDataSet();
+    if (dataSet != null) {
+      writer.writeObject(dataSet);
+      writer.flush();
+      System.out.println("Datas Sent!");
+    }
+  }
+
+  private void getFilDataSet() throws IOException {
+    System.out.println("Collecting datas...");
+    ServerDataSetTask task = new ServerDataSetTask();
+    FILDataSet dataSet = task.getFILDataSet();
+    if (dataSet != null) {
+      writer.writeObject(dataSet);
+      writer.flush();
+      System.out.println("Datas Sent!");
+    }
+  }
+
+  private void getFitDataSet() throws IOException {
+    System.out.println("Collecting datas...");
+    ServerDataSetTask task = new ServerDataSetTask();
+    FITDataSet dataSet = task.getFITDataSet();
+    if (dataSet != null) {
+      writer.writeObject(dataSet);
+      writer.flush();
+      System.out.println("Datas Sent!");
+    }
+  }
+
+  private void getFiseDataSet() throws IOException {
+    System.out.println("Collecting datas...");
+    ServerDataSetTask task = new ServerDataSetTask();
+    FISEDataSet dataSet = task.getFISEDataSet();
     if (dataSet != null) {
       writer.writeObject(dataSet);
       writer.flush();

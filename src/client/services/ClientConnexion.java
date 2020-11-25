@@ -1,9 +1,11 @@
 package client.services;
 
 import model.ServerCommand;
-import model.ServerDataSet;
+import model.serverDataSet.FILDataSet;
+import model.serverDataSet.FISEDataSet;
+import model.serverDataSet.FITDataSet;
+import model.serverDataSet.ServerDataSet;
 import model.Student;
-import utils.ConsoleColors;
 
 import java.io.*;
 import java.net.Socket;
@@ -32,16 +34,35 @@ public class ClientConnexion implements Runnable {
     this.command = ServerCommand.GET_GENERAL;
   }
 
+  public void configureForPromotionsDataSet(IDataSetListener dataSetListener) {
+    this.dataSetListener = dataSetListener;
+    this.command = ServerCommand.GET_PROMOTIONS;
+  }
+
+  public void configureForFILDataSet(IDataSetListener dataSetListener) {
+    this.dataSetListener = dataSetListener;
+    this.command = ServerCommand.GET_FIL;
+  }
+
+  public void configureForFITDataSet(IDataSetListener dataSetListener) {
+    this.dataSetListener = dataSetListener;
+    this.command = ServerCommand.GET_FIT;
+  }
+
+  public void configureForFISEDataSet(IDataSetListener dataSetListener) {
+    this.dataSetListener = dataSetListener;
+    this.command = ServerCommand.GET_FISE;
+  }
+
   public void configureForAuthentification(IStudentListener studentListener, String loginPassword) {
     this.studentListener = studentListener;
     this.command = ServerCommand.GET_STUDENT;
     this.loginPassword = loginPassword;
-
   }
 
   public void configureForSavingStudent(IStudentListener studentListener, Student student) {
     this.studentListener = studentListener;
-    this.command = ServerCommand.SAVE_STUDENT;
+    this.command = ServerCommand.POST_STUDENT;
     this.student = student;
   }
 
@@ -68,7 +89,7 @@ public class ClientConnexion implements Runnable {
             studentListener.onReceivedStudent(null, response);
           }
         }
-        case ServerCommand.SAVE_STUDENT -> {
+        case ServerCommand.POST_STUDENT -> {
           writer.writeObject(student);
           writer.flush();
           response = read();
@@ -77,6 +98,22 @@ public class ClientConnexion implements Runnable {
         case ServerCommand.GET_GENERAL -> {
           ServerDataSet dataSet = readDataSet();
           dataSetListener.onReceivedGeneralDataSet(dataSet);
+        }
+        case ServerCommand.GET_PROMOTIONS -> {
+          ServerDataSet dataSet = readDataSet();
+          dataSetListener.onReveivedPromotionsDataSet(dataSet);
+        }
+        case ServerCommand.GET_FIL -> {
+          FILDataSet dataSet = readFILDataSet();
+          dataSetListener.onReceivedFILDataSet(dataSet);
+        }
+        case ServerCommand.GET_FIT -> {
+          FITDataSet dataSet = readFITDataSet();
+          dataSetListener.onReceivedFITDataSet(dataSet);
+        }
+        case ServerCommand.GET_FISE -> {
+          FISEDataSet dataSet = readFISEDataSet();
+          dataSetListener.onReceivedFISEDataSet(dataSet);
         }
       }
     } catch (IOException | ClassNotFoundException e) {
@@ -95,5 +132,17 @@ public class ClientConnexion implements Runnable {
   private ServerDataSet readDataSet() throws IOException, ClassNotFoundException {
     Object obj = reader.readObject();
     return (ServerDataSet)obj;
+  }
+
+  private FILDataSet readFILDataSet() throws IOException, ClassNotFoundException {
+    return (FILDataSet)reader.readObject();
+  }
+
+  private FITDataSet readFITDataSet() throws IOException, ClassNotFoundException {
+    return (FITDataSet)reader.readObject();
+  }
+
+  private FISEDataSet readFISEDataSet() throws IOException, ClassNotFoundException {
+    return (FISEDataSet)reader.readObject();
   }
 }
