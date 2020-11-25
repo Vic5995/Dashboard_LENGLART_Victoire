@@ -4,6 +4,7 @@ import model.State;
 import model.Student;
 import client.services.IStudentListener;
 import client.services.ServerServices;
+import utils.ConsoleColors;
 
 import java.util.Scanner;
 
@@ -12,7 +13,7 @@ public class Form implements IStudentListener {
   private final String LOGIN_STR = "Login : ";
   private final String PASSWORD_STR = "Mot de passe : ";
 
-  private  Scanner keyboard;
+  private Scanner keyboard;
   private Student currentStudent;
 
   public Form() {
@@ -20,6 +21,7 @@ public class Form implements IStudentListener {
   }
 
   public void authentification() {
+    print(ConsoleColors.RESET);
     print(AUTHENTIFICATION_STR);
     print(LOGIN_STR);
     String login = keyboard.nextLine();
@@ -35,7 +37,7 @@ public class Form implements IStudentListener {
       print(student.getLogin());
       printForm();
     } else {
-      print(serverResponse);
+      print(ConsoleColors.CYAN + serverResponse);
     }
   }
 
@@ -46,6 +48,7 @@ public class Form implements IStudentListener {
     } else {
       print("Erreur de sauvegarde");
     }
+    //TODO affichage final puis quitter ou retour à l'accueil
   }
 
   /* =================================================

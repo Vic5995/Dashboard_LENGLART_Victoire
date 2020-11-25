@@ -1,8 +1,11 @@
 package server.services;
 
 import model.ServerCommand;
+import model.ServerDataSet;
 import model.Student;
+import server.dbTasks.DataSetTask;
 import server.dbTasks.StudentTask;
+import utils.ConsoleColors;
 
 
 import java.io.*;
@@ -11,10 +14,8 @@ import java.net.Socket;
 
 public class ClientProcessor implements Runnable {
   private Socket socket;
-  private PrintWriter writer = null;
-  private ObjectOutputStream objectWriter = null;
-  private BufferedInputStream reader = null;
-  private ObjectInputStream objectReader = null;
+  private ObjectOutputStream writer = null;
+  private ObjectInputStream reader = null;
 
   public ClientProcessor(Socket socket) {
     this.socket = socket;
@@ -28,14 +29,12 @@ public class ClientProcessor implements Runnable {
     while (!socket.isClosed()) {
 
       try {
-        objectWriter = new ObjectOutputStream(socket.getOutputStream());
-        objectReader = new ObjectInputStream(socket.getInputStream());
-        writer = new PrintWriter(socket.getOutputStream());
-        reader = new BufferedInputStream(socket.getInputStream());
+        writer = new ObjectOutputStream(socket.getOutputStream());
+        reader = new ObjectInputStream(socket.getInputStream());
 
         //on attend la demande du client
         String response = read();
-        System.out.println(response +"\n");
+        System.out.println(ConsoleColors.CYAN + response + ConsoleColors.WHITE + "\n");
         InetSocketAddress remote = (InetSocketAddress)socket.getRemoteSocketAddress();
 
         //traitement de la demande client
@@ -51,6 +50,11 @@ public class ClientProcessor implements Runnable {
             closeConnexion = true;
             break;
           }
+          case ServerCommand.GET_GENERAL: {
+            getGeneral();
+            closeConnexion = true;
+            break;
+          }
         }
         if (closeConnexion) {
           writer = null;
@@ -62,53 +66,56 @@ public class ClientProcessor implements Runnable {
 
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
+        closeConnexion = true;
       }
     }
   }
 
-  private void getStudent() throws IOException {
-    writer.write("waiting for login...");
-    writer.flush();
+  private void getStudent() throws IOException, ClassNotFoundException {
     String[] loginPassword = read().split("/");
     StudentTask task = new StudentTask();
     Student student = task.getStudent(loginPassword[0]);
     if (student != null) {
       if (student.getPassword().equals(loginPassword[1])) {
-        writer.write("OK");
+        writer.writeObject("OK");
         writer.flush();
-        objectWriter.writeObject(student);
-        objectWriter.flush();
+        writer.writeObject(student);
+        writer.flush();
       } else {
-        writer.write("Mot de passe erroné.");
+        writer.writeObject("Mot de passe erroné.");
         writer.flush();
       }
     } else {
-      writer.write("Étudiant inexistant.");
+      writer.writeObject("Étudiant inexistant.");
       writer.flush();
     }
   }
 
   private void saveStudent() throws IOException, ClassNotFoundException {
-    writer.write("waiting for student...");
-    writer.flush();
-    Student student = (Student)objectReader.readObject();
+    Student student = (Student) reader.readObject();
     StudentTask task = new StudentTask();
     boolean success = task.updateStudent(student);
     if (success) {
-      writer.write("1");
+      writer.writeObject("1");
     } else {
-      writer.write("0");
+      writer.writeObject("0");
     }
     writer.flush();
   }
 
+  private void getGeneral() throws IOException {
+    System.out.println("Collecting datas...");
+    DataSetTask task = new DataSetTask();
+    ServerDataSet dataSet = task.getGeneralDataSet();
+    if (dataSet != null) {
+      writer.writeObject(dataSet);
+      writer.flush();
+      System.out.println("Datas Sent!");
+    }
+  }
+
   //méthode pour la lecture des réponses
-  private String read() throws IOException{
-    String response = "";
-    int stream;
-    byte[] b = new byte[4096];
-    stream = reader.read(b);
-    response = new String(b, 0, stream);
-    return response;
+  private String read() throws IOException, ClassNotFoundException {
+    return (String) reader.readObject();
   }
 }

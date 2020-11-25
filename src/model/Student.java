@@ -9,16 +9,18 @@ public class Student implements Serializable {
   private String firstName;
   private String password;
   private int promotion;
+  private int englishGroup;
   private State state;
   private String comment;
 
-  public Student(int id, String login, String lastName, String firstName, String password, int promotion, State state, String comment) {
+  public Student(int id, String login, String lastName, String firstName, String password, int promotion, int englishGroup, State state, String comment) {
     this.id = id;
     this.login = login;
     this.lastName = lastName;
     this.firstName = firstName;
     this.password = password;
     this.promotion = promotion;
+    this.englishGroup = englishGroup;
     this.state = state;
     this.comment = comment;
   }
@@ -90,4 +92,14 @@ public class Student implements Serializable {
   public void setLogin(String login) {
     this.login = login;
   }
+
+  public int getEnglishGroup() {
+    return englishGroup;
+  }
+
+  public void setEnglishGroup(int englishGroup) {
+    this.englishGroup = englishGroup;
+  }
+
+
 }

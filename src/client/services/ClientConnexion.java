@@ -1,29 +1,25 @@
 package client.services;
 
-import client.main.Main;
 import model.ServerCommand;
+import model.ServerDataSet;
 import model.Student;
+import utils.ConsoleColors;
 
 import java.io.*;
 import java.net.Socket;
 
 public class ClientConnexion implements Runnable {
   private Socket connexion = null;
-  private PrintWriter writer = null;
-  private BufferedInputStream reader = null;
-  private ObjectInputStream objectReader = null;
-  private ObjectOutputStream objectWriter = null;
+  private ObjectInputStream reader = null;
+  private ObjectOutputStream writer = null;
 
   private String command;
   private IStudentListener studentListener;
+  private IDataSetListener dataSetListener;
   private String loginPassword;
   private Student student;
 
-  public ClientConnexion(String host, int port,
-                         IStudentListener studentListener, String loginPassword) {
-    this.studentListener = studentListener;
-    this.command = ServerCommand.GET_STUDENT;
-    this.loginPassword = loginPassword;
+  public ClientConnexion(String host, int port) {
     try {
       connexion = new Socket(host, port);
     } catch (IOException e) {
@@ -31,34 +27,38 @@ public class ClientConnexion implements Runnable {
     }
   }
 
-  public ClientConnexion(String host, int port,
-                         IStudentListener studentListener, Student student) {
+  public void configureForGeneralDataSet(IDataSetListener dataSetListener) {
+    this.dataSetListener = dataSetListener;
+    this.command = ServerCommand.GET_GENERAL;
+  }
+
+  public void configureForAuthentification(IStudentListener studentListener, String loginPassword) {
+    this.studentListener = studentListener;
+    this.command = ServerCommand.GET_STUDENT;
+    this.loginPassword = loginPassword;
+
+  }
+
+  public void configureForSavingStudent(IStudentListener studentListener, Student student) {
     this.studentListener = studentListener;
     this.command = ServerCommand.SAVE_STUDENT;
     this.student = student;
-    try {
-      connexion = new Socket(host, port);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
   @Override
   public void run() {
     try {
-      writer = new PrintWriter(connexion.getOutputStream());
-      reader = new BufferedInputStream(connexion.getInputStream());
-      objectReader = new ObjectInputStream(connexion.getInputStream());
-      objectWriter = new ObjectOutputStream(connexion.getOutputStream());
+      writer = new ObjectOutputStream(connexion.getOutputStream());
+      reader = new ObjectInputStream(connexion.getInputStream());
 
-      writer.write(this.command);
+      writer.writeObject(this.command);
       writer.flush();
 
-      String response = read();
+      String response = null;
 
       switch (this.command) {
-        case ServerCommand.GET_STUDENT : {
-          writer.write(this.loginPassword);
+        case ServerCommand.GET_STUDENT -> {
+          writer.writeObject(this.loginPassword);
           writer.flush();
           response = read();
           if (response.equals("OK")) {
@@ -67,14 +67,16 @@ public class ClientConnexion implements Runnable {
           } else {
             studentListener.onReceivedStudent(null, response);
           }
-          break;
         }
-        case ServerCommand.SAVE_STUDENT : {
-          objectWriter.writeObject(student);
-          objectWriter.flush();
+        case ServerCommand.SAVE_STUDENT -> {
+          writer.writeObject(student);
+          writer.flush();
           response = read();
           studentListener.onStudentSaved(response.equals("1"));
-          break;
+        }
+        case ServerCommand.GET_GENERAL -> {
+          ServerDataSet dataSet = readDataSet();
+          dataSetListener.onReceivedGeneralDataSet(dataSet);
         }
       }
     } catch (IOException | ClassNotFoundException e) {
@@ -82,17 +84,16 @@ public class ClientConnexion implements Runnable {
     }
   }
 
-  private String read() throws IOException {
-    String response = "";
-    int stream;
-    byte[] b = new byte[4096];
-    stream = reader.read(b);
-    response = new String(b, 0, stream);
-    return response;
+  private String read() throws IOException, ClassNotFoundException {
+    return (String)reader.readObject();
   }
 
   private Student readStudent() throws IOException, ClassNotFoundException {
-    return (Student)objectReader.readObject();
+    return (Student) reader.readObject();
   }
 
+  private ServerDataSet readDataSet() throws IOException, ClassNotFoundException {
+    Object obj = reader.readObject();
+    return (ServerDataSet)obj;
+  }
 }

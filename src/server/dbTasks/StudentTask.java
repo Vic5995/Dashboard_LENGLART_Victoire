@@ -6,7 +6,7 @@ import model.Student;
 import java.sql.*;
 
 public class StudentTask {
-  private Connection connexion;
+  private Connection connection;
 
   private void loadDatabase() {
     // Chargement du driver
@@ -17,7 +17,7 @@ public class StudentTask {
     }
 
     try {
-      connexion = DriverManager.getConnection("jdbc:sqlite:dashboard.db", "root", "");
+      connection = DriverManager.getConnection("jdbc:sqlite:dashboard.db", "root", "");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -33,7 +33,7 @@ public class StudentTask {
     try {
       //exécution de la requête
       PreparedStatement lookingForUser =
-        connexion.prepareStatement("SELECT * FROM student WHERE login = ?;");
+        connection.prepareStatement("SELECT * FROM student WHERE login = ?;");
       lookingForUser.setString(1, mLogin);
       results = lookingForUser.executeQuery();
 
@@ -43,10 +43,11 @@ public class StudentTask {
         String lastname = results.getString("lastname");
         String firstname = results.getString("firstname");
         String password = results.getString("_password");
-        int prom = results.getInt("promomotion");
+        int prom = results.getInt("promotion");
         int state = results.getInt("state");
         String comment = results.getString("_comment");
-        student = new Student(id_student, mLogin, lastname, firstname, password, prom, State.getStateFromId(state), comment);
+        //TODO modifier pour acquisition du groupe
+        student = new Student(id_student, mLogin, lastname, firstname, password, prom, 0, State.getStateFromId(state), comment);
       }
     } catch(SQLException s) {
       System.out.println(s.getMessage());
@@ -54,7 +55,7 @@ public class StudentTask {
       //fermeture de connexion
       try {
         if(results != null) { results.close(); }
-        if(connexion != null) { connexion.close(); }
+        if(connection != null) { connection.close(); }
       } catch (SQLException e) {
         System.out.println(e.getMessage());
       }
@@ -69,7 +70,7 @@ public class StudentTask {
     try {
       //exécution de la requête
       PreparedStatement update =
-        connexion.prepareStatement("UPDATE student SET state=?, _comment=? WHERE id_student=?;");
+        connection.prepareStatement("UPDATE student SET state=?, _comment=? WHERE id_student=?;");
       update.setInt(1, student.getState().getId());
       update.setString(2, student.getComment());
       update.setInt(3, student.getId());
@@ -81,7 +82,7 @@ public class StudentTask {
     } finally {
       //fermeture de connexion
       try {
-        if(connexion != null) { connexion.close(); }
+        if(connection != null) { connection.close(); }
       } catch (SQLException e) {
         System.out.println(e.getMessage());
       }
