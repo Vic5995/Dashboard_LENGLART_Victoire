@@ -16,14 +16,6 @@ public class Promotion implements Serializable {
   private int id;
   private List<Student> students;
 
-  public Promotion(List<Student> students) {
-    this.students = students;
-  }
-
-  public Promotion(int id, List<Student> students) {
-    this.id = id;
-    this.students = students;
-  }
 
   public Promotion(int id) {
     this.id = id;
@@ -34,36 +26,16 @@ public class Promotion implements Serializable {
     return id;
   }
 
-  public void setId(int id) {
-    this.id = id;
-  }
-
   public List<Student> getStudents() {
     return students;
   }
 
-  public void setStudents(List<Student> students) {
-    this.students = students;
+  public void add(Student student) {
+    this.students.add(student);
   }
 
-  public boolean add(Student student) {
-    return this.students.add(student);
-  }
-
-  public boolean addAll(List<Student> students) {
-    return this.students.addAll(students);
-  }
-
-  public boolean remove(Student student) {
-    return this.students.remove(student);
-  }
-
-  public boolean removeAll(List<Student> students) {
-    return this.students.removeAll(students);
-  }
-
-  public boolean contains(Student student) {
-    return this.students.contains(student);
+  public void removeAll(List<Student> students) {
+    this.students.removeAll(students);
   }
 
 }

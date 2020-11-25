@@ -9,7 +9,6 @@ import model.serverDataSet.ServerDataSet;
 import model.Student;
 import server.dbTasks.ServerDataSetTask;
 import server.dbTasks.StudentTask;
-import utils.ConsoleColors;
 
 
 import java.io.*;
@@ -38,7 +37,7 @@ public class ClientProcessor implements Runnable {
 
         //on attend la demande du client
         String response = read();
-        System.out.println(ConsoleColors.CYAN + response + ConsoleColors.WHITE + "\n");
+        System.out.println(response + "\n");
         InetSocketAddress remote = (InetSocketAddress)socket.getRemoteSocketAddress();
 
         //traitement de la demande client

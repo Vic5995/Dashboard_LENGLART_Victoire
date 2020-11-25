@@ -13,6 +13,15 @@ import model.serverDataSet.ServerDataSet;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Classe DashBoard
+ *
+ *  -> Son rôle est la gestion des affichages et des appels des différentes données
+ *
+ * @see Form
+ * @see ClientMain
+ * @see ServerServices
+ */
 public class Dashboard implements IDataSetListener {
   private Scanner keyboard;
   private ServerDataSet _dataSet;
@@ -21,6 +30,9 @@ public class Dashboard implements IDataSetListener {
     keyboard = new Scanner(System.in);
   }
 
+  /**
+   * Permet d'obtenir l'état général des élèves
+   */
   public void askServer() {
     ServerServices.getGeneralDataSet(this);
   }
@@ -78,10 +90,6 @@ public class Dashboard implements IDataSetListener {
     print("");
     print(NAV_2);
     readNav2();
-  }
-
-  public void loadPromotionsData() {
-    ServerServices.getPromotionsDataSet(this);
   }
 
   public void displaysPromotions(ServerDataSet dataSet) {
@@ -220,6 +228,12 @@ public class Dashboard implements IDataSetListener {
     readOnePromotion(promotion.getId());
   }
 
+  /* =================================================
+      SERVER COMMUNICATION
+
+      -> retours des appels passés au serveur
+   ================================================ */
+
   @Override
   public void onReceivedGeneralDataSet(ServerDataSet dataSet) {
     displayGeneralState(dataSet);
@@ -252,6 +266,11 @@ public class Dashboard implements IDataSetListener {
 
   /* =================================================
       CAPTURE SERVICES
+
+      -> lecture des réponses pour les différents navigateurs utilisés
+      -> pour chaque changement de page, on refait un appel au serveur
+      pour mettre à jour les données
+      -> les appels au serveur passe par la classe ServerServices
    ================================================ */
 
   private void readNav1() {
@@ -270,7 +289,7 @@ public class Dashboard implements IDataSetListener {
           break;
         }
         case 2 : {
-          loadPromotionsData();
+          ServerServices.getPromotionsDataSet(this);
           break;
         }
         case 3 : {

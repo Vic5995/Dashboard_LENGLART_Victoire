@@ -3,6 +3,15 @@ package client.services;
 import client.main.ClientMain;
 import model.Student;
 
+/**
+ * Classe : ServerServices
+ *
+ *  -> gestionnaire des différents services disponibles depuis le serveur
+ *
+ * @see client.main.Dashboard
+ * @see client.main.Form
+ * @see ClientConnexion
+ */
 public class ServerServices {
 
   public static void authentification(String login, String password, IStudentListener listener) {

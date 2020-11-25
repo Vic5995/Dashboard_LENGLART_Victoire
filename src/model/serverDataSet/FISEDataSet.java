@@ -2,6 +2,11 @@ package model.serverDataSet;
 
 import java.io.Serializable;
 
+/**
+  * Classe : FISEDataSet
+  *
+  *  -> permet la récupération des données statistiques depuis le serveur
+  */
 public class FISEDataSet implements Serializable {
 
   public FISEDataSet() {

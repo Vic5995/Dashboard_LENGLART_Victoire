@@ -2,6 +2,11 @@ package model.serverDataSet;
 
 import java.io.Serializable;
 
+/**
+ * Classe : ServerDataSet
+ *
+ *  -> permet la récupération des données statistiques depuis le serveur
+ */
 public class ServerDataSet implements Serializable {
 
   private int generalTotal;
@@ -97,7 +102,6 @@ public class ServerDataSet implements Serializable {
   /* =================================================
       PROMOTIONS STATES
    ================================================ */
-  //TODO séparer en deux classes
   private int totalFIL;
   private int presentFIL;
   private int covidFIL;

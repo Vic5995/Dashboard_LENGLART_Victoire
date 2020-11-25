@@ -11,6 +11,15 @@ import model.Student;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Classe : ClientConnexion
+ *
+ *  -> permet de gérer les commandes passées au serveur en configurant les différents listeners et objets nécessaire
+ *  à la bonne communication
+ *
+ * @see ServerCommand
+ * @see ServerServices
+ */
 public class ClientConnexion implements Runnable {
   private Socket connexion = null;
   private ObjectInputStream reader = null;
@@ -30,6 +39,13 @@ public class ClientConnexion implements Runnable {
       e.printStackTrace();
     }
   }
+
+  /* =================================================
+      CONFIGURATION SERVICES
+
+      -> permettent les configations des listeners et des commandes à envoyées au serveur
+      -> le cas échéant, permettent de stocker les données nécessaires à la récupération d'autres données
+   ================================================ */
 
   public void configureForGeneralDataSet(IDataSetListener dataSetListener) {
     this.dataSetListener = dataSetListener;
@@ -134,6 +150,12 @@ public class ClientConnexion implements Runnable {
       e.printStackTrace();
     }
   }
+
+  /* =================================================
+      READING SERVICES
+
+      -> Permettent la lecture des différents objets renvoyés par le serveur
+   ================================================ */
 
   private String read() throws IOException, ClassNotFoundException {
     return (String)reader.readObject();

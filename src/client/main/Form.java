@@ -1,13 +1,21 @@
 package client.main;
 
-import model.State;
-import model.Student;
 import client.services.IStudentListener;
 import client.services.ServerServices;
-import utils.ConsoleColors;
+import model.State;
+import model.Student;
 
 import java.util.Scanner;
 
+/**
+ * Classe Form
+ *
+ *  -> Son rôle est la saisie et l'envoi d'une saisie d'un étudiant sur sa situation
+ *
+ * @see Dashboard
+ * @see ClientMain
+ * @see ServerServices
+ */
 public class Form implements IStudentListener {
   private final String AUTHENTIFICATION_STR = "Veuillez vous identifiez :";
   private final String LOGIN_STR = "Login : ";
@@ -21,6 +29,34 @@ public class Form implements IStudentListener {
   public Form() {
     keyboard = new Scanner(System.in);
   }
+
+  /* =================================================
+      FORM
+   ================================================ */
+
+  private final String FORM_START_STR = "Veuillez remplir les informations suivantes :";
+  private final String INPUT_PRESENT_ABS_STR = "Êtes-vous présent(e) ou absent(e) ? \n1. Présent(e)\n2. Absent(e)";
+  private final String INPUT_ABS_REASON_STR = "Pour quel motif êtes-vous absent? \n" +
+    "1. COVID\n2. Cas Contact COVID\n3. En attente de test ou de résultats de test COVID\n4. Malade autre\n5. Motif professionel";
+  private final String INPUT_CAMPUS_STR = "Êtes-vous sur ou hors campus?\n1. Sur le Campus\n2. Hors campus";
+  private final String COMMENT_STR = "Voulez-vous ajouter un commentaire à votre situation (si non, appuyez sur 0 et Entrée) ?";
+  private  final String INPUT_ERROR_MODE_STR = "Saisie incorrecte";
+
+  public void printForm() {
+    print(FORM_START_STR);
+    print(INPUT_PRESENT_ABS_STR);
+    State state = readPresentAbs();
+    String comment = readComment();
+    if (comment.equals("0")) comment = null;
+    sendStudent(state, comment);
+  }
+
+  /* =================================================
+      SERVER COMMUNICATION
+
+      -> appels et envois au serveur
+      -> pour le formulaire, on ne met à jour l'étudiant qu'une fois la saisie complète
+   ================================================ */
 
   public void authentification() {
     print(AUTHENTIFICATION_STR);
@@ -67,26 +103,18 @@ public class Form implements IStudentListener {
     }
   }
 
-  /* =================================================
-      FORM
-   ================================================ */
-
-  private final String FORM_START_STR = "Veuillez remplir les informations suivantes :";
-  private final String INPUT_PRESENT_ABS_STR = "Êtes-vous présent(e) ou absent(e) ? \n1. Présent(e)\n2. Absent(e)";
-  private final String INPUT_ABS_REASON_STR = "Pour quel motif êtes-vous absent? \n" +
-    "1. COVID\n2. Cas Contact COVID\n3. En attente de test ou de résultats de test COVID\n4. Malade autre\n5. Motif professionel";
-  private final String INPUT_CAMPUS_STR = "Êtes-vous sur ou hors campus?\n1. Sur le Campus\n2. Hors campus";
-  private final String COMMENT_STR = "Voulez-vous ajouter un commentaire à votre situation (si non, appuyez sur 0 et Entrée) ?";
-  private  final String INPUT_ERROR_MODE_STR = "Saisie incorrecte";
-
-  public void printForm() {
-    print(FORM_START_STR);
-    print(INPUT_PRESENT_ABS_STR);
-    State state = readPresentAbs();
-    String comment = readComment();
-    if (comment.equals("0")) comment = null;
-    sendStudent(state, comment);
+  private void sendStudent(State newState, String comment) {
+    currentStudent.setState(newState);
+    currentStudent.setComment(comment);
+    ServerServices.saveStudent(currentStudent, this);
   }
+
+  /* =================================================
+      CAPTURE SERVICES
+
+      -> lecture des réponses pour les différents questionnaires utilisés
+      -> chaque réponse met à jour l'étudiant courant
+   ================================================ */
 
   private State readPresentAbs() {
     State finalState = currentStudent.getState();
@@ -117,10 +145,6 @@ public class Form implements IStudentListener {
     return finalState;
   }
 
-  /**
-   * Permet de spécifier la raison de l'absence.
-   * @return
-   */
   private State readAbsReason() {
     print(INPUT_ABS_REASON_STR);
     State finalState = currentStudent.getState(); //on met l'état actuel comme état de départ pour éviter les NPE
@@ -220,12 +244,6 @@ public class Form implements IStudentListener {
         }
       }
     }
-  }
-
-  private void sendStudent(State newState, String comment) {
-    currentStudent.setState(newState);
-    currentStudent.setComment(comment);
-    ServerServices.saveStudent(currentStudent, this);
   }
 
   /* =================================================

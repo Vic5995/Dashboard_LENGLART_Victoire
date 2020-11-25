@@ -2,6 +2,11 @@ package model.serverDataSet;
 
 import java.io.Serializable;
 
+/**
+ * Classe : FILDataSet
+ *
+ *  -> permet la récupération des données statistiques depuis le serveur
+ */
 public class FILDataSet implements Serializable {
 
   public FILDataSet() {

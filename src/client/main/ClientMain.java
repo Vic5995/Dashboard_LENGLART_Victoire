@@ -1,8 +1,15 @@
 package client.main;
 
-import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * Classe  ClientMain
+ *
+ *  -> démarre l'application côté client
+ *
+ * @see Form
+ * @see Dashboard
+ */
 public class ClientMain {
   private static Scanner keyboard;
 
@@ -16,6 +23,10 @@ public class ClientMain {
   private static final String CHOOSE_STR = "Bienvenue sur le DashBoard Covid!\n\nVeuillez sélectionner un mode :\n1. Étudiant : accès au formulaire\n2. Professeur : accès au tableau de bord\n3. Quitter";
   private static final String INPUT_ERROR_MODE_STR = "Saisie incorrecte, vous devez saisir 1 ou 2 pour le choix du mode.\n";
 
+  /**
+   * Après inititalisation, on attend la saisie du mode par le client avant de lancer l'affichage en conséquence ou de quitter l'application
+   * @param args
+   */
   public static void main(String[] args) {
     init();
     int selectedMode = getMode();
@@ -34,10 +45,17 @@ public class ClientMain {
     }
   }
 
+  /**
+   * Initialisation du clavier pour l'ensemble des saisies
+   */
   private static void init() {
     keyboard = new Scanner(System.in);
   }
 
+  /**
+   * Méthode pour la saisie et le contrôle de cette sernière pour obtenir le mode su client
+   * @return (int) le mode sélectionné par l'utilisateur
+   */
   private static int getMode() {
     int selectedMode = 0;
     boolean inputAccepted = false;
