@@ -1,5 +1,8 @@
 package server.dbTasks;
 
+import model.Promotion;
+import model.State;
+import model.Student;
 import model.serverDataSet.FILDataSet;
 import model.serverDataSet.FISEDataSet;
 import model.serverDataSet.FITDataSet;
@@ -431,5 +434,47 @@ public class ServerDataSetTask {
       }
     }
     return dataSet;
+  }
+
+  public Promotion getOnePromotion(int promId) {
+    loadDatabase();
+    Promotion promotion = new Promotion(promId);
+
+    ResultSet results = null;
+
+    try {
+      //exécution de la requête
+      PreparedStatement lookingForUser =
+        connection.prepareStatement("SELECT * FROM student WHERE promotion = ?;");
+      lookingForUser.setInt(1, promId);
+      results = lookingForUser.executeQuery();
+
+      //récupération des données
+      while(results.next()) {
+        int id_student = results.getInt("id_student");
+        String lastname = results.getString("lastname");
+        String firstname = results.getString("firstname");
+        String password = results.getString("_password");
+        int prom = results.getInt("promotion");
+        int state = results.getInt("state");
+        String comment = results.getString("_comment");
+        int englishGroup = results.getInt("englishGroup");
+        String login = results.getString("login");
+        Student student = new Student(id_student, login, lastname, firstname, password, prom, englishGroup, State.getStateFromId(state), comment);
+        promotion.add(student);
+      }
+    } catch(SQLException s) {
+      System.out.println(s.getMessage());
+    } finally {
+      //fermeture de connexion
+      try {
+        if(results != null) { results.close(); }
+        if(connection != null) { connection.close(); }
+      } catch (SQLException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+
+    return promotion;
   }
 }

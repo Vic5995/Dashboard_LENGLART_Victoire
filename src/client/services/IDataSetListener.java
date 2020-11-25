@@ -1,5 +1,6 @@
 package client.services;
 
+import model.Promotion;
 import model.serverDataSet.FILDataSet;
 import model.serverDataSet.FISEDataSet;
 import model.serverDataSet.FITDataSet;
@@ -16,4 +17,6 @@ public interface IDataSetListener {
   void onReceivedFITDataSet(FITDataSet dataSet);
 
   void onReceivedFISEDataSet(FISEDataSet dataSet);
+
+  void onReceivedPromotion(Promotion promotion);
 }

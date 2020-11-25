@@ -1,5 +1,6 @@
 package client.services;
 
+import model.Promotion;
 import model.ServerCommand;
 import model.serverDataSet.FILDataSet;
 import model.serverDataSet.FISEDataSet;
@@ -20,6 +21,7 @@ public class ClientConnexion implements Runnable {
   private IDataSetListener dataSetListener;
   private String loginPassword;
   private Student student;
+  private int promId;
 
   public ClientConnexion(String host, int port) {
     try {
@@ -64,6 +66,12 @@ public class ClientConnexion implements Runnable {
     this.studentListener = studentListener;
     this.command = ServerCommand.POST_STUDENT;
     this.student = student;
+  }
+
+  public void configureForOnePromotion(IDataSetListener dataSetListener, int promId) {
+    this.dataSetListener = dataSetListener;
+    this.promId = promId;
+    this.command = ServerCommand.GET_ONE_PROMOTION;
   }
 
   @Override
@@ -115,6 +123,12 @@ public class ClientConnexion implements Runnable {
           FISEDataSet dataSet = readFISEDataSet();
           dataSetListener.onReceivedFISEDataSet(dataSet);
         }
+        case ServerCommand.GET_ONE_PROMOTION -> {
+          writer.writeObject(this.promId);
+          writer.flush();
+          Promotion promotion = readPromotion();
+          dataSetListener.onReceivedPromotion(promotion);
+        }
       }
     } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -144,5 +158,9 @@ public class ClientConnexion implements Runnable {
 
   private FISEDataSet readFISEDataSet() throws IOException, ClassNotFoundException {
     return (FISEDataSet)reader.readObject();
+  }
+
+  private Promotion readPromotion() throws IOException,ClassNotFoundException {
+    return (Promotion)reader.readObject();
   }
 }

@@ -54,4 +54,11 @@ public class ServerServices {
     Thread t = new Thread(connexion);
     t.start();
   }
+
+  public static void getOnePromotion(IDataSetListener listener, int promId) {
+    ClientConnexion connexion = new ClientConnexion(ClientMain.HOST, ClientMain.PORT);
+    connexion.configureForOnePromotion(listener, promId);
+    Thread t = new Thread(connexion);
+    t.start();
+  }
 }

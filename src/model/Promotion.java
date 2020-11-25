@@ -1,8 +1,10 @@
 package model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Promotion {
+public class Promotion implements Serializable {
   public static final int FILA1 = 1;
   public static final int FILA2 = 2;
   public static final int FILA3 = 3;
@@ -21,6 +23,11 @@ public class Promotion {
   public Promotion(int id, List<Student> students) {
     this.id = id;
     this.students = students;
+  }
+
+  public Promotion(int id) {
+    this.id = id;
+    this.students = new ArrayList<>();
   }
 
   public int getId() {

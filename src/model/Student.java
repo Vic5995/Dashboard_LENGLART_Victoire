@@ -101,5 +101,8 @@ public class Student implements Serializable {
     this.englishGroup = englishGroup;
   }
 
-
+  @Override
+  public String toString() {
+    return this.id + " | " + this.firstName + " | " + this.lastName + " | " + this.state.getState();
+  }
 }

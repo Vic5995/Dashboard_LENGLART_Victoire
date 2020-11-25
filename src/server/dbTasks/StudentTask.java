@@ -46,8 +46,8 @@ public class StudentTask {
         int prom = results.getInt("promotion");
         int state = results.getInt("state");
         String comment = results.getString("_comment");
-        //TODO modifier pour acquisition du groupe
-        student = new Student(id_student, mLogin, lastname, firstname, password, prom, 0, State.getStateFromId(state), comment);
+        int englishGroup = results.getInt("englishGroup");
+        student = new Student(id_student, mLogin, lastname, firstname, password, prom, englishGroup, State.getStateFromId(state), comment);
       }
     } catch(SQLException s) {
       System.out.println(s.getMessage());

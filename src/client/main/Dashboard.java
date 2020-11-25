@@ -2,11 +2,15 @@ package client.main;
 
 import client.services.IDataSetListener;
 import client.services.ServerServices;
+import model.Promotion;
+import model.State;
+import model.Student;
 import model.serverDataSet.FILDataSet;
 import model.serverDataSet.FISEDataSet;
 import model.serverDataSet.FITDataSet;
 import model.serverDataSet.ServerDataSet;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Dashboard implements IDataSetListener {
@@ -29,6 +33,10 @@ public class Dashboard implements IDataSetListener {
   private final String NAV_1 = "Action suivante : 1. Détails absents autres. 2. Affichage par promotion. 3. Quitter";
   private final String NAV_2 = "Action suivante : 1. Retour. 2.Quitter";
   private final String NAV_3 = "Action suivante :\nDétails : 1. FIL. 2. FIT. 3. FISE.\n4. Retour. 5.Quitter.";
+  private final String NAV_FIL = "Action suivante :\nDétails : 1. FIL A1. 2. FIL A2. 3. FIL A3.\n4. Retour. 5.Quitter.";
+  private final String NAV_FIT = "Action suivante :\nDétails : 1. FIT A1.\n2. Retour. 3.Quitter.";
+  private final String NAV_FISE = "Action suivante :\nDétails : 1. FISE A1. 2. FISE A2. 3. FISE A3.\n4. Retour. 5.Quitter.";
+  private final String NAV_ONE_PROMOTION = "Action suivante : 1. Retour. 2.Quitter";
 
   private final String GENERAL_STATE = "État général de l'ensemble des étudiants : ";
   private final String GENERAL_PRESENT = "Étudiants présents : ";
@@ -109,6 +117,9 @@ public class Dashboard implements IDataSetListener {
     print("A3 présents : " + writePercentage((double)dataSet.getPresentFILA3() / (double)dataSet.getTotalFILA3()));
     print("A3 absents Covid : " + writePercentage((double)dataSet.getCovidFILA3() / (double)dataSet.getTotalFILA3()));
     print("A3 absents autres : " + writePercentage((double)dataSet.getOtherFILA3() / (double)dataSet.getTotalFILA3()));
+    print("");
+    print(NAV_FIL);
+    readNavFIL();
   }
 
   public void displayFIT(FITDataSet dataSet) {
@@ -117,6 +128,9 @@ public class Dashboard implements IDataSetListener {
     print("A1 présents : " + writePercentage((double)dataSet.getPresentFITA1() / (double)dataSet.getTotalFITA1()));
     print("A1 absents Covid : " + writePercentage((double)dataSet.getCovidFITA1() / (double)dataSet.getTotalFITA1()));
     print("A1 absents autres : " + writePercentage((double)dataSet.getOtherFITA1() / (double)dataSet.getTotalFITA1()));
+    print("");
+    print(NAV_FIT);
+    readNavFIT();
   }
 
   public void displayFISE(FISEDataSet dataSet) {
@@ -133,6 +147,77 @@ public class Dashboard implements IDataSetListener {
     print("A3 présents : " + writePercentage((double)dataSet.getPresentFISEA3() / (double)dataSet.getTotalFISEA3()));
     print("A3 absents Covid : " + writePercentage((double)dataSet.getCovidFISEA3() / (double)dataSet.getTotalFISEA3()));
     print("A3 absents autres : " + writePercentage((double)dataSet.getOtherFISEA3() / (double)dataSet.getTotalFISEA3()));
+    print("");
+    print(NAV_FISE);
+    readNavFISE();
+  }
+
+  public void displayOnePromotion(Promotion promotion) {
+    switch (promotion.getId()) {
+      case 1 -> print("État de la promotion FIL A1 :");
+      case 2 -> print("État de la promotion FIL A2 :");
+      case 3 -> print("État de la promotion FIL A3 :");
+      case 4 -> print("État de la promotion FIT A1 :");
+      case 5 -> print("État de la promotion FISE A1 :");
+      case 6 -> print("État de la promotion FISE A2 :");
+      case 7 -> print("État de la promotion FISE A3 :");
+    }
+    print("");
+    ArrayList<Student> tmp = new ArrayList<>();
+    print("Présents :");
+    for (Student student : promotion.getStudents()) {
+      if (student.getState().equals(State.PRESENT)) {
+        print(student.toString());
+        tmp.add(student);
+      }
+    }
+    print("");
+    promotion.removeAll(tmp);
+    tmp.clear();
+    print("Covid sur Campus :");
+    for (Student student : promotion.getStudents()) {
+      if (student.getState().equals(State.POSITIVE_CAMPUS)) {
+        print(student.toString());
+        tmp.add(student);
+      }
+    }
+    print("");
+    promotion.removeAll(tmp);
+    tmp.clear();
+    print("Covid hors Campus :");
+    for (Student student : promotion.getStudents()) {
+      if (student.getState().equals(State.POSITIVE)) {
+        print(student.toString());
+        tmp.add(student);
+      }
+    }
+    print("");
+    promotion.removeAll(tmp);
+    tmp.clear();
+    print("Autres sur Campus :");
+    for (Student student : promotion.getStudents()) {
+      if (student.getState().equals(State.CONTACT_CASE_CAMPUS)
+        || student.getState().equals(State.PREVENTION_CAMPUS)
+        || student.getState().equals(State.SICK_CAMPUS)
+        || student.getState().equals(State.PRO_CAMPUS)) {
+        print(student.toString());
+        tmp.add(student);
+      }
+    }
+    print("");
+    promotion.removeAll(tmp);
+    print("Autres hors Campus :");
+    for (Student student : promotion.getStudents()) {
+      if (student.getState().equals(State.CONTACT_CASE)
+        || student.getState().equals(State.PREVENTION)
+        || student.getState().equals(State.SICK)
+        || student.getState().equals(State.PRO)) {
+        print(student.toString());
+      }
+    }
+    print("");
+    print(NAV_ONE_PROMOTION);
+    readOnePromotion(promotion.getId());
   }
 
   @Override
@@ -160,11 +245,16 @@ public class Dashboard implements IDataSetListener {
     displayFISE(dataSet);
   }
 
+  @Override
+  public void onReceivedPromotion(Promotion promotion) {
+    displayOnePromotion(promotion);
+  }
+
   /* =================================================
       CAPTURE SERVICES
    ================================================ */
 
-  public void readNav1() {
+  private void readNav1() {
     boolean inputAccepted = false;
     int selectedState;
     while (!inputAccepted) {
@@ -194,7 +284,7 @@ public class Dashboard implements IDataSetListener {
     }
   }
 
-  public void readNav2() {
+  private void readNav2() {
     boolean inputAccepted = false;
     int selectedState;
     while (!inputAccepted) {
@@ -251,6 +341,143 @@ public class Dashboard implements IDataSetListener {
           System.exit(0);
         }
         default: {
+          inputAccepted = false;
+          print(INPUT_ERROR_MODE_STR);
+        }
+      }
+    }
+  }
+
+  private void readNavFIL() {
+    boolean inputAccepted = false;
+    int selectedState;
+    while (!inputAccepted) {
+      while (!keyboard.hasNextInt()) {
+        print(INPUT_ERROR_MODE_STR);
+        keyboard.next();
+      }
+      selectedState = keyboard.nextInt();
+      inputAccepted = true;
+      switch (selectedState) {
+        case 1 : {
+          ServerServices.getOnePromotion(this, Promotion.FILA1);
+          break;
+        }
+        case 2 : {
+          ServerServices.getOnePromotion(this, Promotion.FILA2);
+          break;
+        }
+        case 3 : {
+          ServerServices.getOnePromotion(this, Promotion.FILA3);
+          break;
+        }
+        case 4 : {
+          ServerServices.getPromotionsDataSet(this);
+          break;
+        }
+        case 5 : {
+          System.exit(0);
+        }
+        default: {
+          inputAccepted = false;
+          print(INPUT_ERROR_MODE_STR);
+        }
+      }
+    }
+  }
+
+  private void readNavFIT() {
+    boolean inputAccepted = false;
+    int selectedState;
+    while (!inputAccepted) {
+      while (!keyboard.hasNextInt()) {
+        print(INPUT_ERROR_MODE_STR);
+        keyboard.next();
+      }
+      selectedState = keyboard.nextInt();
+      inputAccepted = true;
+      switch (selectedState) {
+        case 1 : {
+          ServerServices.getOnePromotion(this, Promotion.FITA1);
+          break;
+        }
+        case 2 : {
+          ServerServices.getPromotionsDataSet(this);
+          break;
+        }
+        case 3 : {
+          System.exit(0);
+        }
+        default: {
+          inputAccepted = false;
+          print(INPUT_ERROR_MODE_STR);
+        }
+      }
+    }
+  }
+
+  private void readNavFISE() {
+    boolean inputAccepted = false;
+    int selectedState;
+    while (!inputAccepted) {
+      while (!keyboard.hasNextInt()) {
+        print(INPUT_ERROR_MODE_STR);
+        keyboard.next();
+      }
+      selectedState = keyboard.nextInt();
+      inputAccepted = true;
+      switch (selectedState) {
+        case 1 : {
+          ServerServices.getOnePromotion(this, Promotion.FISEA1);
+          break;
+        }
+        case 2 : {
+          ServerServices.getOnePromotion(this, Promotion.FISEA2);
+          break;
+        }
+        case 3 : {
+          ServerServices.getOnePromotion(this, Promotion.FISEA3);
+          break;
+        }
+        case 4 : {
+          ServerServices.getPromotionsDataSet(this);
+          break;
+        }
+        case 5 : {
+          System.exit(0);
+        }
+        default: {
+          inputAccepted = false;
+          print(INPUT_ERROR_MODE_STR);
+        }
+      }
+    }
+  }
+
+  private void readOnePromotion(int promId) {
+    boolean inputAccepted = false;
+    int selectedState;
+    while (!inputAccepted) {
+      while (!keyboard.hasNextInt()) {
+        print(INPUT_ERROR_MODE_STR);
+        keyboard.next();
+      }
+      selectedState = keyboard.nextInt();
+      inputAccepted = true;
+      switch (selectedState) {
+        case 1 -> {
+          if (promId == Promotion.FILA1 || promId == Promotion.FILA2 || promId == Promotion.FILA3) {
+            ServerServices.getFILDataSet(this);
+          } else if (promId == Promotion.FITA1) {
+            ServerServices.getFITDataSet(this);
+          } else {
+            ServerServices.getFISEDataSet(this);
+          }
+        }
+        case 2 -> {
+          System.exit(0);
+        }
+        default -> {
           inputAccepted = false;
           print(INPUT_ERROR_MODE_STR);
         }

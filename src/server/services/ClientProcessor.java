@@ -1,5 +1,6 @@
 package server.services;
 
+import model.Promotion;
 import model.ServerCommand;
 import model.serverDataSet.FILDataSet;
 import model.serverDataSet.FISEDataSet;
@@ -43,41 +44,66 @@ public class ClientProcessor implements Runnable {
         //traitement de la demande client
 
         switch (response) {
-          case ServerCommand.GET_STUDENT: {
+          case ServerCommand.GET_STUDENT -> {
             getStudent();
             closeConnexion = true;
-            break;
           }
-          case ServerCommand.POST_STUDENT: {
+          case ServerCommand.POST_STUDENT -> {
             saveStudent();
             closeConnexion = true;
-            break;
           }
-          case ServerCommand.GET_GENERAL: {
+          case ServerCommand.GET_GENERAL -> {
             getGeneral();
             closeConnexion = true;
-            break;
           }
-          case ServerCommand.GET_PROMOTIONS: {
+          case ServerCommand.GET_PROMOTIONS -> {
             getPromotions();
             closeConnexion = true;
-            break;
           }
-          case ServerCommand.GET_FIL: {
+          case ServerCommand.GET_FIL -> {
             getFilDataSet();
             closeConnexion = true;
-            break;
           }
-          case ServerCommand.GET_FIT: {
+          case ServerCommand.GET_FIT -> {
             getFitDataSet();
             closeConnexion = true;
-            break;
           }
-          case ServerCommand.GET_FISE: {
+          case ServerCommand.GET_FISE -> {
             getFiseDataSet();
             closeConnexion = true;
-            break;
           }
+          case ServerCommand.GET_ONE_PROMOTION -> {
+            getOnePromotion();
+            closeConnexion = true;
+          }
+          /*case ServerCommand.GET_FIL_A1 -> {
+            getPromotionWithId(Promotion.FILA1);
+            closeConnexion = true;
+          }
+          case ServerCommand.GET_FIL_A2 -> {
+            getPromotionWithId(Promotion.FILA2);
+            closeConnexion = true;
+          }
+          case ServerCommand.GET_FIL_A3 -> {
+            getPromotionWithId(Promotion.FILA3);
+            closeConnexion = true;
+          }
+          case ServerCommand.GET_FIT_A1 -> {
+            getPromotionWithId(Promotion.FITA1);
+            closeConnexion = true;
+          }
+          case ServerCommand.GET_FISE_A1 -> {
+            getPromotionWithId(Promotion.FISEA1);
+            closeConnexion = true;
+          }
+          case ServerCommand.GET_FISE_A2 -> {
+            getPromotionWithId(Promotion.FISEA2);
+            closeConnexion = true;
+          }
+          case ServerCommand.GET_FISE_A3 -> {
+            getPromotionWithId(Promotion.FISEA3);
+            closeConnexion = true;
+          }*/
         }
         if (closeConnexion) {
           writer = null;
@@ -174,6 +200,18 @@ public class ClientProcessor implements Runnable {
     System.out.println("Collecting datas...");
     ServerDataSetTask task = new ServerDataSetTask();
     FISEDataSet dataSet = task.getFISEDataSet();
+    if (dataSet != null) {
+      writer.writeObject(dataSet);
+      writer.flush();
+      System.out.println("Datas Sent!");
+    }
+  }
+
+  private void getOnePromotion() throws IOException, ClassNotFoundException {
+    int promId = (int)reader.readObject();
+    System.out.println("Collecting datas...");
+    ServerDataSetTask task = new ServerDataSetTask();
+    Promotion dataSet = task.getOnePromotion(promId);
     if (dataSet != null) {
       writer.writeObject(dataSet);
       writer.flush();
