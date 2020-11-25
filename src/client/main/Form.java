@@ -13,6 +13,8 @@ public class Form implements IStudentListener {
   private final String LOGIN_STR = "Login : ";
   private final String PASSWORD_STR = "Mot de passe : ";
 
+  private final String NAV_FINAL = "Action suivante : 1.Deconnexion.";
+
   private Scanner keyboard;
   private Student currentStudent;
 
@@ -21,7 +23,6 @@ public class Form implements IStudentListener {
   }
 
   public void authentification() {
-    print(ConsoleColors.RESET);
     print(AUTHENTIFICATION_STR);
     print(LOGIN_STR);
     String login = keyboard.nextLine();
@@ -34,10 +35,16 @@ public class Form implements IStudentListener {
   public void onReceivedStudent(Student student, String serverResponse) {
     if (student != null) {
       currentStudent = student;
-      print(student.getLogin());
+      print("");
+      print(student.toString());
+      if (student.getState().isOnCampus()) {
+        print("SUR CAMPUS");
+      } else {
+        print("HORS CAMPUS");
+      }
       printForm();
     } else {
-      print(ConsoleColors.CYAN + serverResponse);
+      print(serverResponse);
     }
   }
 
@@ -45,10 +52,19 @@ public class Form implements IStudentListener {
   public void onStudentSaved(boolean saved) {
     if (saved) {
       print("Mise à jour effectuée");
+      print("");
+      print(currentStudent.toString());
+      if (currentStudent.getState().isOnCampus()) {
+        print("SUR CAMPUS");
+      } else {
+        print("HORS CAMPUS");
+      }
+      print("");
+      print(NAV_FINAL);
+      readNavFinal();
     } else {
       print("Erreur de sauvegarde");
     }
-    //TODO affichage final puis quitter ou retour à l'accueil
   }
 
   /* =================================================
@@ -66,13 +82,13 @@ public class Form implements IStudentListener {
   public void printForm() {
     print(FORM_START_STR);
     print(INPUT_PRESENT_ABS_STR);
-    State state = askPresentAbs();
-    String comment = askComment();
+    State state = readPresentAbs();
+    String comment = readComment();
     if (comment.equals("0")) comment = null;
     sendStudent(state, comment);
   }
 
-  private State askPresentAbs() {
+  private State readPresentAbs() {
     State finalState = currentStudent.getState();
     boolean inputAccepted = false;
     int selectedState;
@@ -89,7 +105,7 @@ public class Form implements IStudentListener {
           break;
         }
         case 2 : {
-          finalState = askAbsReason();
+          finalState = readAbsReason();
           break;
         }
         default: {
@@ -105,7 +121,7 @@ public class Form implements IStudentListener {
    * Permet de spécifier la raison de l'absence.
    * @return
    */
-  private State askAbsReason() {
+  private State readAbsReason() {
     print(INPUT_ABS_REASON_STR);
     State finalState = currentStudent.getState(); //on met l'état actuel comme état de départ pour éviter les NPE
     boolean inputAccepted = false;
@@ -119,23 +135,23 @@ public class Form implements IStudentListener {
       inputAccepted = true;
       switch (selectedState) {
         case 1 : {
-          finalState = askOnCampus(State.POSITIVE);
+          finalState = readOnCampus(State.POSITIVE);
           break;
         }
         case 2 : {
-          finalState = askOnCampus(State.CONTACT_CASE);
+          finalState = readOnCampus(State.CONTACT_CASE);
           break;
         }
         case 3 : {
-          finalState = askOnCampus(State.PREVENTION);
+          finalState = readOnCampus(State.PREVENTION);
           break;
         }
         case 4 : {
-          finalState = askOnCampus(State.SICK);
+          finalState = readOnCampus(State.SICK);
           break;
         }
         case 5 : {
-          finalState = askOnCampus(State.PRO);
+          finalState = readOnCampus(State.PRO);
           break;
         }
         default: {
@@ -147,7 +163,7 @@ public class Form implements IStudentListener {
     return finalState;
   }
 
-  private State askOnCampus(State state) {
+  private State readOnCampus(State state) {
     print(INPUT_CAMPUS_STR);
     State finalState = null;
     boolean inputAccepted = false;
@@ -177,10 +193,33 @@ public class Form implements IStudentListener {
     return finalState;
   }
 
-  private String askComment() {
+  private String readComment() {
     print(COMMENT_STR);
     keyboard.next();
     return keyboard.nextLine();
+  }
+
+  private void readNavFinal() {
+    boolean inputAccepted = false;
+    int selectedState;
+    while (!inputAccepted) {
+      while (!keyboard.hasNextInt()) {
+        print(INPUT_ERROR_MODE_STR);
+        keyboard.next();
+      }
+      selectedState = keyboard.nextInt();
+      inputAccepted = true;
+      switch (selectedState) {
+        case 1 : {
+          ClientMain.main(null);
+          break;
+        }
+        default: {
+          inputAccepted = false;
+          print(INPUT_ERROR_MODE_STR);
+        }
+      }
+    }
   }
 
   private void sendStudent(State newState, String comment) {

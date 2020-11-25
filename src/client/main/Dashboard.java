@@ -30,7 +30,7 @@ public class Dashboard implements IDataSetListener {
    ================================================ */
   private  final String INPUT_ERROR_MODE_STR = "Saisie incorrecte";
 
-  private final String NAV_1 = "Action suivante : 1. Détails absents autres. 2. Affichage par promotion. 3. Quitter";
+  private final String NAV_1 = "Action suivante : 1. Détails absents autres. 2. Affichage par promotion. 3. Retour";
   private final String NAV_2 = "Action suivante : 1. Retour. 2.Quitter";
   private final String NAV_3 = "Action suivante :\nDétails : 1. FIL. 2. FIT. 3. FISE.\n4. Retour. 5.Quitter.";
   private final String NAV_FIL = "Action suivante :\nDétails : 1. FIL A1. 2. FIL A2. 3. FIL A3.\n4. Retour. 5.Quitter.";
