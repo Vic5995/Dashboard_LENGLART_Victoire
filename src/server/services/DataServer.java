@@ -7,8 +7,6 @@ import java.net.Socket;
 
 public class DataServer {
 
-  //TODO gestion de la perte connexion client
-
   private int PORT;
   private String host = "127.0.0.1";
   private ServerSocket server = null;
