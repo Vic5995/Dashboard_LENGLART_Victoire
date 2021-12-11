@@ -29,7 +29,7 @@ Appuyer sur **Entrée** ensuite afin de valider la saisie.
  devient *victoire*.
  2. Ensuite plusieurs questions sont posées afin de mettre à jour le profil de l'étudiant connecté.
  3. Une fois la saisie terminée, la mise à jour est envoyée au serveur.
- 4. Une fois l'enoi exécuté, un récapitulatif de l'état actuel est affiché.
+ 4. Une fois l'envoi exécuté, un récapitulatif de l'état actuel est affiché.
  5. L'action de **Déconnexion** ramène l'utilisateur à l'écran d'accueil.
 
 ### Dashboard
