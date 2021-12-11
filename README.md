@@ -1,6 +1,6 @@
 # PROJET DASHBOARD COVID
 
-Réalisé par **Victoire LENGLART**, FIL A1.
+Réalisé par **Victoire L**.
 Rendu 25/11/2020, version console.
 
 ## Ressources utilisées
@@ -39,14 +39,13 @@ de détails.
 Du plus large au plus précis, on peut ainsi voir :
 * L'état général de tous les étudiants inscrits ;
 * L'état général de tous les étudiants inscrits avec plus de détails dans les types d'absences ;
-* L'état général par formation (FIL, FIT et FISE) ;
+* L'état général par formation ;
 * l'état général pour chaque année de chaque formation ;
 * Une vue détaillée de chaque année de formation avec la liste nominative des étudiants.
 
 ## Remarques
 
-* Les noms utilisés dans la base de données sont des listes générées aléatoirement, à part
-pour les FIL A1, ces étudiants n'existent pas.
+* Les noms utilisés dans la base de données sont des listes générées aléatoirement, ces étudiants n'existent pas.
 * Le script ayant généré la base de données fait partie des ressources, n'hésitez pas à le consulter
 en cas de difficultés avec les données.
 
